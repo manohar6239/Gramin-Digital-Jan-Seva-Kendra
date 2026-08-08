@@ -20,6 +20,12 @@ footer{text-align:center;background:#063b22;color:#fff;padding:30px}
 #editPanel{display:none;position:fixed;inset:0;background:#fff;z-index:1000;overflow:auto;padding:25px}
 #editPanel .box{max-width:800px;margin:auto}.field{margin:15px 0}.field label{display:block;font-weight:bold;margin-bottom:6px}.field input,.field textarea{width:100%;padding:11px;border:1px solid #bbb;border-radius:7px;font-size:16px}.actions{display:flex;gap:10px;flex-wrap:wrap}.editBtn{position:fixed;right:15px;bottom:15px;z-index:900;border:0;border-radius:50px;padding:14px 20px;background:#f97316;color:#fff;font-weight:bold;cursor:pointer}
 @media(max-width:600px){.logo{width:90%;height:auto}nav a{padding:12px 9px;font-size:13px}}
+
+.service-card{cursor:pointer;transition:.2s}.service-card:hover{transform:translateY(-4px);box-shadow:0 8px 25px #0002}
+#serviceModal{display:none;position:fixed;inset:0;background:#0008;z-index:2000;padding:20px;align-items:center;justify-content:center}
+#serviceModal .modal-box{background:#fff;width:min(600px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:28px;position:relative}
+#serviceModal h2{color:#075e54;margin-top:0}.modal-close{position:absolute;right:15px;top:12px;border:0;background:#eee;border-radius:50%;width:35px;height:35px;font-size:20px;cursor:pointer}
+.detail-list{text-align:left;line-height:1.8}.detail-list li{margin:6px 0}
 </style>
 </head>
 <body>
@@ -70,6 +76,15 @@ footer{text-align:center;background:#063b22;color:#fff;padding:30px}
 <div class="actions"><button class="btn green" onclick="saveData()">💾 Save Changes</button><button class="btn orange" onclick="closeEditor()">✕ Close</button><button class="btn" onclick="resetData()">↺ Reset</button></div>
 </div></div>
 
+
+<div id="serviceModal"><div class="modal-box">
+<button class="modal-close" onclick="closeService()">×</button>
+<div id="modalIcon" style="font-size:48px"></div>
+<h2 id="modalTitle"></h2><p id="modalDesc"></p>
+<ul class="detail-list" id="modalList"></ul>
+<a class="btn green" id="modalCall">📞 कॉल करें</a>
+<a class="btn orange" id="modalWhatsApp" target="_blank">💬 WhatsApp पर पूछें</a>
+</div></div>
 <script>
 const defaults={
 name:"Gramin Digital Jan Seva Kendra",
@@ -97,7 +112,7 @@ shopName.textContent=data.name;footerName.textContent=data.name;tagline.textCont
 phone.textContent=data.phone;phoneTop.textContent=data.phone;address.textContent=data.address;addressTop.textContent=data.address;
 hours.textContent=data.hours;intro.textContent=data.intro;aboutText.textContent=data.about;
 [callTop,callHero,callBottom].forEach(x=>x.href=phoneLink());[waTop,waBottom].forEach(x=>x.href=waLink());
-serviceGrid.innerHTML=data.services.map(s=>`<div class="card"><div class="icon">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join("");
+serviceGrid.innerHTML=data.services.map((s,i)=>`<div class="card service-card" onclick="openService(${i})"><div class="icon">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p><small>👆 विवरण देखने के लिए क्लिक करें</small></div>`).join("");
 }
 function openEditor(){
 eName.value=data.name;eTag.value=data.tag;ePhone.value=data.phone;eAddress.value=data.address;eHours.value=data.hours;eIntro.value=data.intro;eAbout.value=data.about;
@@ -105,7 +120,22 @@ eServices.value=data.services.map(s=>s.join(" | ")).join("\n");editPanel.style.d
 }
 function saveData(){
 data={name:eName.value.trim()||defaults.name,tag:eTag.value.trim()||defaults.tag,phone:ePhone.value.trim()||defaults.phone,address:eAddress.value.trim()||defaults.address,hours:eHours.value.trim()||defaults.hours,intro:eIntro.value.trim()||defaults.intro,about:eAbout.value.trim()||defaults.about,services:eServices.value.split("\n").filter(x=>x.trim()).map(x=>{let p=x.split("|").map(y=>y.trim());return[p[0]||"📌",p[1]||"Service",p.slice(2).join(" | ")||"सेवा उपलब्ध है।"]})};
-localStorage.setItem("gdjskData",JSON.stringify(data));render();closeEditor();alert("Website update हो गई!");
+localStorage.setItem("gdjskData",JSON.stringify(data));
+const serviceDetails={
+"आधार सेवा":{desc:"आधार से संबंधित उपलब्ध सेवाओं की जानकारी और आवेदन/सुधार प्रक्रिया में सहायता।",items:["आधार में नाम/पता/जन्मतिथि सुधार की जानकारी","मोबाइल नंबर अपडेट से संबंधित मार्गदर्शन","आधार डाउनलोड/प्रिंट में सहायता","आधार से जुड़े ऑनलाइन कार्यों में सहायता"]},
+"पैन कार्ड सेवा":{desc:"PAN कार्ड से संबंधित ऑनलाइन आवेदन और सुधार में सहायता।",items:["नया PAN आवेदन में सहायता","PAN correction की जानकारी","PAN डाउनलोड/प्रिंट में सहायता","आवेदन की स्थिति देखने में सहायता"]},
+"ऑनलाइन फॉर्म":{desc:"सरकारी एवं अन्य ऑनलाइन फॉर्म भरने में सहायता।",items:["सरकारी आवेदन फॉर्म","ऑनलाइन रजिस्ट्रेशन","दस्तावेज़ अपलोड में सहायता","फॉर्म की जानकारी और प्रिंट"]},
+"बिल भुगतान":{desc:"उपलब्ध बिजली, पानी, मोबाइल और अन्य डिजिटल भुगतान सेवाओं में सहायता।",items:["बिजली बिल भुगतान","मोबाइल/रिचार्ज","अन्य उपलब्ध बिल भुगतान","भुगतान रसीद प्राप्त करने में सहायता"]},
+"मनी ट्रांसफर":{desc:"उपलब्ध डिजिटल बैंकिंग सेवाओं के माध्यम से पैसे भेजने में सहायता।",items:["उपलब्ध बैंकिंग सेवा के अनुसार सहायता","लेन-देन की रसीद","उपलब्ध सेवा/शुल्क की जानकारी","सुरक्षित डिजिटल लेन-देन के लिए मार्गदर्शन"]},
+"प्रिंट एवं स्कैन":{desc:"दस्तावेज़ों की प्रिंट, स्कैन और डिजिटल कॉपी की सुविधा।",items:["ब्लैक एंड व्हाइट प्रिंट","कलर प्रिंट","दस्तावेज़ स्कैन","PDF/डिजिटल कॉपी तैयार करना"]},
+"फोटो सेवा":{desc:"फोटो और दस्तावेज़ तैयार करने में सहायता।",items:["पासपोर्ट साइज फोटो","डिजिटल फोटो तैयार करना","फोटो प्रिंट","दस्तावेज़ के लिए फोटो तैयार करना"]},
+"अन्य डिजिटल सेवाएँ":{desc:"विभिन्न ऑनलाइन और डिजिटल कार्यों में सहायता।",items:["ऑनलाइन आवेदन","दस्तावेज़ संबंधी डिजिटल कार्य","प्रिंट/स्कैन संबंधी कार्य","उपलब्ध अन्य डिजिटल सेवाओं की जानकारी"]}
+};
+function openService(i){const s=data.services[i],d=serviceDetails[s[1]]||{desc:s[2],items:["इस सेवा के लिए उपलब्ध सुविधाओं की जानकारी दुकान पर प्राप्त करें।"]};modalIcon.textContent=s[0];modalTitle.textContent=s[1];modalDesc.textContent=d.desc;modalList.innerHTML=d.items.map(x=>`<li>✅ ${x}</li>`).join("");modalCall.href=phoneLink();modalWhatsApp.href=waLink()+"?text="+encodeURIComponent("नमस्ते, मुझे "+s[1]+" के बारे में जानकारी चाहिए।");serviceModal.style.display="flex"}
+function closeService(){serviceModal.style.display="none"}
+serviceModal.addEventListener("click",e=>{if(e.target===serviceModal)closeService()});
+
+render();closeEditor();alert("Website update हो गई!");
 }
 function resetData(){if(confirm("सारी जानकारी default पर वापस करें?")){localStorage.removeItem("gdjskData");data=defaults;render();openEditor()}}
 function closeEditor(){editPanel.style.display="none"}
