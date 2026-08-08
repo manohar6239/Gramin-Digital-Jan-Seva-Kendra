@@ -2,6 +2,7 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8">
+<meta name="robots" content="index,follow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gramin Digital Jan Seva Kendra</title>
 <style>
@@ -21,8 +22,8 @@ section{padding:55px 5%}.title{text-align:center;color:#075e54}
 .about{text-align:center;background:#eaf7ee}.about p{max-width:850px;margin:auto;line-height:1.8;font-size:18px}
 .contact{max-width:700px;margin:auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 4px 16px #0001}.info{font-size:18px;line-height:1.7;margin:10px 0}
 footer{background:#063b22;color:#fff;text-align:center;padding:28px}
-.editBtn{position:fixed;right:15px;bottom:15px;border:0;border-radius:30px;background:#f97316;color:#fff;padding:13px 18px;font-weight:bold;z-index:900}
-#modal,#editor{display:none;position:fixed;inset:0;background:#0008;z-index:2000;padding:18px;overflow:auto}
+
+#modal{display:none;position:fixed;inset:0;background:#0008;z-index:2000;padding:18px;overflow:auto}
 .box{background:#fff;width:min(650px,100%);margin:30px auto;padding:25px;border-radius:17px;position:relative}.close{position:absolute;right:12px;top:10px;border:0;border-radius:50%;font-size:22px;width:35px;height:35px}
 .option{display:block;background:#f5f8f5;border:1px solid #ddd;border-radius:9px;padding:12px;margin:9px 0;cursor:pointer}.option input{width:19px;height:19px;vertical-align:middle;margin-right:8px}
 .field{margin:12px 0}.field label{display:block;font-weight:bold;margin-bottom:5px}.field input,.field textarea{width:100%;padding:10px;border:1px solid #bbb;border-radius:7px;font-size:16px}
@@ -54,16 +55,12 @@ footer{background:#063b22;color:#fff;text-align:center;padding:28px}
 </div></section>
 <footer><h3 id="footer"></h3><p>आपकी सेवा, हमारा संकल्प</p></footer>
 
-
-
 <div id="modal"><div class="box">
 <button class="close" onclick="closeModal()">×</button>
 <div id="modalIcon" class="icon"></div><h2 id="modalTitle"></h2><p id="modalDesc"></p>
 <div id="options"></div>
 <button class="btn orange" onclick="sendSelected()">💬 चुनी हुई Service WhatsApp करें</button>
 </div></div>
-
-
 <script>
 const defaults={
 name:"Gramin Digital Jan Seva Kendra",
