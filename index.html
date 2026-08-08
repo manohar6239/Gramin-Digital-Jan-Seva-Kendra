@@ -26,6 +26,8 @@ footer{text-align:center;background:#063b22;color:#fff;padding:30px}
 #serviceModal .modal-box{background:#fff;width:min(600px,100%);max-height:90vh;overflow:auto;border-radius:18px;padding:28px;position:relative}
 #serviceModal h2{color:#075e54;margin-top:0}.modal-close{position:absolute;right:15px;top:12px;border:0;background:#eee;border-radius:50%;width:35px;height:35px;font-size:20px;cursor:pointer}
 .detail-list{text-align:left;line-height:1.8}.detail-list li{margin:6px 0}
+
+.service-options{text-align:left;margin:18px 0}.service-option{display:block;background:#f5f8f5;margin:9px 0;padding:12px;border-radius:9px;cursor:pointer;border:1px solid #ddd}.service-option input{width:18px;height:18px;vertical-align:middle;margin-right:9px}
 </style>
 </head>
 <body>
@@ -81,9 +83,9 @@ footer{text-align:center;background:#063b22;color:#fff;padding:30px}
 <button class="modal-close" onclick="closeService()">×</button>
 <div id="modalIcon" style="font-size:48px"></div>
 <h2 id="modalTitle"></h2><p id="modalDesc"></p>
-<ul class="detail-list" id="modalList"></ul>
+<div class="service-options" id="modalList"></div>
 <a class="btn green" id="modalCall">📞 कॉल करें</a>
-<a class="btn orange" id="modalWhatsApp" target="_blank">💬 WhatsApp पर पूछें</a>
+<a class="btn orange" id="modalWhatsApp" target="_blank">💬 इस Service के लिए WhatsApp करें</a>
 </div></div>
 <script>
 const defaults={
@@ -118,24 +120,33 @@ function openEditor(){
 eName.value=data.name;eTag.value=data.tag;ePhone.value=data.phone;eAddress.value=data.address;eHours.value=data.hours;eIntro.value=data.intro;eAbout.value=data.about;
 eServices.value=data.services.map(s=>s.join(" | ")).join("\n");editPanel.style.display="block";
 }
-function saveData(){
-data={name:eName.value.trim()||defaults.name,tag:eTag.value.trim()||defaults.tag,phone:ePhone.value.trim()||defaults.phone,address:eAddress.value.trim()||defaults.address,hours:eHours.value.trim()||defaults.hours,intro:eIntro.value.trim()||defaults.intro,about:eAbout.value.trim()||defaults.about,services:eServices.value.split("\n").filter(x=>x.trim()).map(x=>{let p=x.split("|").map(y=>y.trim());return[p[0]||"📌",p[1]||"Service",p.slice(2).join(" | ")||"सेवा उपलब्ध है।"]})};
-localStorage.setItem("gdjskData",JSON.stringify(data));
 const serviceDetails={
-"आधार सेवा":{desc:"आधार से संबंधित उपलब्ध सेवाओं की जानकारी और आवेदन/सुधार प्रक्रिया में सहायता।",items:["आधार में नाम/पता/जन्मतिथि सुधार की जानकारी","मोबाइल नंबर अपडेट से संबंधित मार्गदर्शन","आधार डाउनलोड/प्रिंट में सहायता","आधार से जुड़े ऑनलाइन कार्यों में सहायता"]},
-"पैन कार्ड सेवा":{desc:"PAN कार्ड से संबंधित ऑनलाइन आवेदन और सुधार में सहायता।",items:["नया PAN आवेदन में सहायता","PAN correction की जानकारी","PAN डाउनलोड/प्रिंट में सहायता","आवेदन की स्थिति देखने में सहायता"]},
-"ऑनलाइन फॉर्म":{desc:"सरकारी एवं अन्य ऑनलाइन फॉर्म भरने में सहायता।",items:["सरकारी आवेदन फॉर्म","ऑनलाइन रजिस्ट्रेशन","दस्तावेज़ अपलोड में सहायता","फॉर्म की जानकारी और प्रिंट"]},
-"बिल भुगतान":{desc:"उपलब्ध बिजली, पानी, मोबाइल और अन्य डिजिटल भुगतान सेवाओं में सहायता।",items:["बिजली बिल भुगतान","मोबाइल/रिचार्ज","अन्य उपलब्ध बिल भुगतान","भुगतान रसीद प्राप्त करने में सहायता"]},
-"मनी ट्रांसफर":{desc:"उपलब्ध डिजिटल बैंकिंग सेवाओं के माध्यम से पैसे भेजने में सहायता।",items:["उपलब्ध बैंकिंग सेवा के अनुसार सहायता","लेन-देन की रसीद","उपलब्ध सेवा/शुल्क की जानकारी","सुरक्षित डिजिटल लेन-देन के लिए मार्गदर्शन"]},
-"प्रिंट एवं स्कैन":{desc:"दस्तावेज़ों की प्रिंट, स्कैन और डिजिटल कॉपी की सुविधा।",items:["ब्लैक एंड व्हाइट प्रिंट","कलर प्रिंट","दस्तावेज़ स्कैन","PDF/डिजिटल कॉपी तैयार करना"]},
-"फोटो सेवा":{desc:"फोटो और दस्तावेज़ तैयार करने में सहायता।",items:["पासपोर्ट साइज फोटो","डिजिटल फोटो तैयार करना","फोटो प्रिंट","दस्तावेज़ के लिए फोटो तैयार करना"]},
-"अन्य डिजिटल सेवाएँ":{desc:"विभिन्न ऑनलाइन और डिजिटल कार्यों में सहायता।",items:["ऑनलाइन आवेदन","दस्तावेज़ संबंधी डिजिटल कार्य","प्रिंट/स्कैन संबंधी कार्य","उपलब्ध अन्य डिजिटल सेवाओं की जानकारी"]}
+"आधार सेवा":{desc:"आधार से संबंधित सेवा चुनें:",items:["आधार में मोबाइल नंबर अपडेट","आधार में नाम सुधार","आधार में पता सुधार","आधार में जन्मतिथि सुधार","आधार डाउनलोड / प्रिंट","आधार से जुड़े अन्य कार्य"]},
+"पैन कार्ड सेवा":{desc:"PAN कार्ड से संबंधित सेवा चुनें:",items:["नया PAN कार्ड आवेदन","PAN कार्ड में सुधार","PAN डाउनलोड / प्रिंट","PAN आवेदन की स्थिति","अन्य PAN सेवा"]},
+"ऑनलाइन फॉर्म":{desc:"ऑनलाइन फॉर्म से संबंधित सेवा चुनें:",items:["सरकारी फॉर्म भरना","ऑनलाइन रजिस्ट्रेशन","दस्तावेज़ अपलोड","फॉर्म प्रिंट","अन्य ऑनलाइन फॉर्म सेवा"]},
+"बिल भुगतान":{desc:"भुगतान की सेवा चुनें:",items:["बिजली बिल भुगतान","मोबाइल रिचार्ज","पानी का बिल","अन्य बिल भुगतान"]},
+"मनी ट्रांसफर":{desc:"मनी ट्रांसफर से संबंधित सेवा चुनें:",items:["पैसे भेजना","लेन-देन की जानकारी","रसीद / ट्रांजैक्शन सहायता","अन्य बैंकिंग सेवा"]},
+"प्रिंट एवं स्कैन":{desc:"प्रिंट/स्कैन की सेवा चुनें:",items:["ब्लैक एंड व्हाइट प्रिंट","कलर प्रिंट","दस्तावेज़ स्कैन","PDF बनाना","अन्य प्रिंट/स्कैन सेवा"]},
+"फोटो सेवा":{desc:"फोटो की सेवा चुनें:",items:["पासपोर्ट साइज फोटो","फोटो प्रिंट","डिजिटल फोटो","दस्तावेज़ के लिए फोटो","अन्य फोटो सेवा"]},
+"अन्य डिजिटल सेवाएँ":{desc:"डिजिटल सेवा चुनें:",items:["ऑनलाइन आवेदन","दस्तावेज़ संबंधी कार्य","डिजिटल कॉपी","प्रिंट/स्कैन कार्य","अन्य डिजिटल सेवा"]}
 };
-function openService(i){const s=data.services[i],d=serviceDetails[s[1]]||{desc:s[2],items:["इस सेवा के लिए उपलब्ध सुविधाओं की जानकारी दुकान पर प्राप्त करें।"]};modalIcon.textContent=s[0];modalTitle.textContent=s[1];modalDesc.textContent=d.desc;modalList.innerHTML=d.items.map(x=>`<li>✅ ${x}</li>`).join("");modalCall.href=phoneLink();modalWhatsApp.href=waLink()+"?text="+encodeURIComponent("नमस्ते, मुझे "+s[1]+" के बारे में जानकारी चाहिए।");serviceModal.style.display="flex"}
-function closeService(){serviceModal.style.display="none"}
-serviceModal.addEventListener("click",e=>{if(e.target===serviceModal)closeService()});
-
-render();closeEditor();alert("Website update हो गई!");
+function openService(i){
+  const s=data.services[i];
+  const d=serviceDetails[s[1]]||{desc:s[2],items:["इस सेवा के लिए उपलब्ध सुविधा की जानकारी दुकान पर प्राप्त करें।"]};
+  modalIcon.textContent=s[0];
+  modalTitle.textContent=s[1];
+  modalDesc.textContent=d.desc;
+  modalList.innerHTML=d.items.map((x,n)=>`<label class="service-option"><input type="checkbox" class="service-check" value="${x.replace(/"/g,"&quot;")}"> ${x}</label>`).join("");
+  modalCall.href=phoneLink();
+  modalWhatsApp.onclick=function(){
+    const selected=[...document.querySelectorAll(".service-check:checked")].map(x=>x.value);
+    if(!selected.length){alert("कृपया पहले कम से कम एक service पर tick करें।");return false;}
+    const msg="नमस्ते, मुझे Gramin Digital Jan Seva Kendra से "+s[1]+" में यह service चाहिए:
+- "+selected.join("
+- ");
+    modalWhatsApp.href=waLink()+"?text="+encodeURIComponent(msg);
+  };
+  serviceModal.style.display="flex";
 }
 function resetData(){if(confirm("सारी जानकारी default पर वापस करें?")){localStorage.removeItem("gdjskData");data=defaults;render();openEditor()}}
 function closeEditor(){editPanel.style.display="none"}
