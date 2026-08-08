@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gramin Digital Jan Seva Kendra</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans Devanagari",sans-serif;color:#183b25;background:#f7faf7}
+header{background:#fff;padding:15px 5%;display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;box-shadow:0 2px 10px #0001}
+.logo{width:300px;max-height:100px;object-fit:contain}.top{background:#075e54;color:#fff;padding:9px 5%;text-align:center;font-size:14px}
+nav{background:#063b22;text-align:center}nav a{display:inline-block;color:#fff;text-decoration:none;padding:15px 20px;font-weight:bold}
+.hero{text-align:center;padding:70px 6%;background:linear-gradient(135deg,#fff,#e9f7ed)}
+.hero h1{font-size:clamp(35px,6vw,58px);color:#075e54;margin:0 0 15px}.hero h1 span{color:#f97316}.hero p{font-size:19px;max-width:750px;margin:auto;line-height:1.7}
+.btn{display:inline-block;padding:13px 22px;margin:15px 5px 0;border-radius:8px;text-decoration:none;font-weight:bold}.green{background:#075e54;color:#fff}.orange{background:#f97316;color:#fff}
+section{padding:60px 5%}.title{text-align:center;color:#075e54;font-size:32px;margin:0 0 30px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:18px;max-width:1150px;margin:auto}.card{background:#fff;padding:25px;border-radius:15px;text-align:center;box-shadow:0 4px 18px #0001}.icon{font-size:40px}.card h3{color:#075e54}
+.about{text-align:center;background:#eaf7ee}.about p{max-width:850px;margin:auto;font-size:18px;line-height:1.8}
+.contact{max-width:700px;margin:auto;background:#fff;padding:30px;border-radius:15px;box-shadow:0 4px 18px #0001}.info{font-size:18px;margin:15px 0;line-height:1.6}
+footer{text-align:center;background:#063b22;color:#fff;padding:30px}
+#editPanel{display:none;position:fixed;inset:0;background:#fff;z-index:1000;overflow:auto;padding:25px}
+#editPanel .box{max-width:800px;margin:auto}.field{margin:15px 0}.field label{display:block;font-weight:bold;margin-bottom:6px}.field input,.field textarea{width:100%;padding:11px;border:1px solid #bbb;border-radius:7px;font-size:16px}.actions{display:flex;gap:10px;flex-wrap:wrap}.editBtn{position:fixed;right:15px;bottom:15px;z-index:900;border:0;border-radius:50px;padding:14px 20px;background:#f97316;color:#fff;font-weight:bold;cursor:pointer}
+@media(max-width:600px){.logo{width:90%;height:auto}nav a{padding:12px 9px;font-size:13px}}
+</style>
+</head>
+<body>
+
+<div class="top">📍 <span id="addressTop"></span> &nbsp; | &nbsp; 📞 <span id="phoneTop"></span></div>
+<header>
+<img class="logo" src="shop-logo.png" alt="Shop Logo">
+<div>
+<a class="btn green" id="callTop">📞 Call</a>
+<a class="btn orange" id="waTop" target="_blank">💬 WhatsApp</a>
+</div>
+</header>
+<nav><a href="#home">होम</a><a href="#services">सेवाएँ</a><a href="#about">हमारे बारे में</a><a href="#contact">संपर्क</a></nav>
+
+<section class="hero" id="home">
+<h1><span id="shopName"></span><br><span id="tagline"></span></h1>
+<p id="intro"></p>
+<a class="btn green" href="#services">हमारी सेवाएँ</a>
+<a class="btn orange" id="callHero">अभी कॉल करें</a>
+</section>
+
+<section id="services"><h2 class="title">हमारी सेवाएँ</h2><div class="grid" id="serviceGrid"></div></section>
+
+<section class="about" id="about"><h2 class="title">हमारे बारे में</h2><p id="aboutText"></p></section>
+
+<section id="contact"><h2 class="title">संपर्क करें</h2><div class="contact">
+<div class="info">📍 <b>पता:</b> <span id="address"></span></div>
+<div class="info">📞 <b>मोबाइल:</b> <span id="phone"></span></div>
+<div class="info">🕘 <b>समय:</b> <span id="hours"></span></div>
+<div style="text-align:center"><a class="btn green" id="callBottom">📞 कॉल करें</a><a class="btn orange" id="waBottom" target="_blank">💬 WhatsApp करें</a></div>
+</div></section>
+
+<footer><h2 id="footerName"></h2><p>आपकी सेवा, हमारा संकल्प</p><p>© 2026 All Rights Reserved.</p></footer>
+
+<button class="editBtn" onclick="openEditor()">⚙️ Edit Website</button>
+
+<div id="editPanel"><div class="box">
+<h2 style="color:#075e54">⚙️ Website Easy Edit</h2>
+<p>यहाँ जानकारी बदलें और <b>Save</b> दबाएँ। बदलाव इसी browser में सेव होंगे।</p>
+<div class="field"><label>दुकान का नाम</label><input id="eName"></div>
+<div class="field"><label>Tagline</label><input id="eTag"></div>
+<div class="field"><label>मोबाइल नंबर</label><input id="ePhone"></div>
+<div class="field"><label>पूरा पता</label><textarea id="eAddress" rows="3"></textarea></div>
+<div class="field"><label>दुकान का समय</label><input id="eHours"></div>
+<div class="field"><label>मुख्य परिचय</label><textarea id="eIntro" rows="3"></textarea></div>
+<div class="field"><label>About / हमारे बारे में</label><textarea id="eAbout" rows="4"></textarea></div>
+<div class="field"><label>Services (हर लाइन में: emoji | नाम | विवरण)</label><textarea id="eServices" rows="10"></textarea></div>
+<div class="actions"><button class="btn green" onclick="saveData()">💾 Save Changes</button><button class="btn orange" onclick="closeEditor()">✕ Close</button><button class="btn" onclick="resetData()">↺ Reset</button></div>
+</div></div>
+
+<script>
+const defaults={
+name:"Gramin Digital Jan Seva Kendra",
+tag:"सभी सरकारी एवं डिजिटल सेवाएँ अब आपके गाँव में",
+phone:"7087449392",
+address:"Bhuvahi Sonaura Khurd, Sonaura Buzurg, Campierganj, Gorakhpur, Uttar Pradesh",
+hours:"सुबह 9:00 बजे से शाम 7:00 बजे तक",
+intro:"ऑनलाइन फॉर्म, डिजिटल सेवाओं और अन्य सुविधाओं के लिए सरल एवं भरोसेमंद सहायता प्राप्त करें।",
+about:"Gramin Digital Jan Seva Kendra का उद्देश्य ग्रामीण क्षेत्र के लोगों तक जरूरी डिजिटल और ऑनलाइन सेवाओं को आसान तरीके से पहुँचाना है। आपकी सुविधा और बेहतर सेवा हमारी प्राथमिकता है।",
+services:[
+["🪪","आधार सेवा","आधार से संबंधित उपलब्ध सेवाओं में सहायता।"],
+["💳","पैन कार्ड सेवा","नया पैन कार्ड आवेदन एवं सुधार सहायता।"],
+["📄","ऑनलाइन फॉर्म","सरकारी एवं अन्य ऑनलाइन फॉर्म भरने की सुविधा।"],
+["💡","बिल भुगतान","बिजली, पानी, मोबाइल एवं अन्य भुगतान सहायता।"],
+["💰","मनी ट्रांसफर","उपलब्ध डिजिटल बैंकिंग सेवाओं में सहायता।"],
+["🖨️","प्रिंट एवं स्कैन","प्रिंट, स्कैन और दस्तावेज़ संबंधी सुविधा।"],
+["📷","फोटो सेवा","फोटो एवं दस्तावेज़ तैयार करने की सुविधा।"],
+["💻","अन्य डिजिटल सेवाएँ","विभिन्न ऑनलाइन डिजिटल कार्यों में सहायता।"]
+]};
+let data=JSON.parse(localStorage.getItem("gdjskData")||"null")||defaults;
+function phoneLink(){return "tel:"+data.phone.replace(/\D/g,"")}
+function waLink(){return "https://wa.me/91"+data.phone.replace(/\D/g,"")}
+function render(){
+shopName.textContent=data.name;footerName.textContent=data.name;tagline.textContent=data.tag;
+phone.textContent=data.phone;phoneTop.textContent=data.phone;address.textContent=data.address;addressTop.textContent=data.address;
+hours.textContent=data.hours;intro.textContent=data.intro;aboutText.textContent=data.about;
+[callTop,callHero,callBottom].forEach(x=>x.href=phoneLink());[waTop,waBottom].forEach(x=>x.href=waLink());
+serviceGrid.innerHTML=data.services.map(s=>`<div class="card"><div class="icon">${s[0]}</div><h3>${s[1]}</h3><p>${s[2]}</p></div>`).join("");
+}
+function openEditor(){
+eName.value=data.name;eTag.value=data.tag;ePhone.value=data.phone;eAddress.value=data.address;eHours.value=data.hours;eIntro.value=data.intro;eAbout.value=data.about;
+eServices.value=data.services.map(s=>s.join(" | ")).join("\n");editPanel.style.display="block";
+}
+function saveData(){
+data={name:eName.value.trim()||defaults.name,tag:eTag.value.trim()||defaults.tag,phone:ePhone.value.trim()||defaults.phone,address:eAddress.value.trim()||defaults.address,hours:eHours.value.trim()||defaults.hours,intro:eIntro.value.trim()||defaults.intro,about:eAbout.value.trim()||defaults.about,services:eServices.value.split("\n").filter(x=>x.trim()).map(x=>{let p=x.split("|").map(y=>y.trim());return[p[0]||"📌",p[1]||"Service",p.slice(2).join(" | ")||"सेवा उपलब्ध है।"]})};
+localStorage.setItem("gdjskData",JSON.stringify(data));render();closeEditor();alert("Website update हो गई!");
+}
+function resetData(){if(confirm("सारी जानकारी default पर वापस करें?")){localStorage.removeItem("gdjskData");data=defaults;render();openEditor()}}
+function closeEditor(){editPanel.style.display="none"}
+render();
+</script>
+</body>
+</html>
