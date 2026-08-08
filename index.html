@@ -2,7 +2,6 @@
 <html lang="hi">
 <head>
 <meta charset="utf-8">
-<meta name="robots" content="index,follow">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Gramin Digital Jan Seva Kendra</title>
 <style>
@@ -22,8 +21,8 @@ section{padding:55px 5%}.title{text-align:center;color:#075e54}
 .about{text-align:center;background:#eaf7ee}.about p{max-width:850px;margin:auto;line-height:1.8;font-size:18px}
 .contact{max-width:700px;margin:auto;background:#fff;padding:25px;border-radius:15px;box-shadow:0 4px 16px #0001}.info{font-size:18px;line-height:1.7;margin:10px 0}
 footer{background:#063b22;color:#fff;text-align:center;padding:28px}
-
-#modal{display:none;position:fixed;inset:0;background:#0008;z-index:2000;padding:18px;overflow:auto}
+.editBtn{position:fixed;right:15px;bottom:15px;border:0;border-radius:30px;background:#f97316;color:#fff;padding:13px 18px;font-weight:bold;z-index:900}
+#modal,#editor{display:none;position:fixed;inset:0;background:#0008;z-index:2000;padding:18px;overflow:auto}
 .box{background:#fff;width:min(650px,100%);margin:30px auto;padding:25px;border-radius:17px;position:relative}.close{position:absolute;right:12px;top:10px;border:0;border-radius:50%;font-size:22px;width:35px;height:35px}
 .option{display:block;background:#f5f8f5;border:1px solid #ddd;border-radius:9px;padding:12px;margin:9px 0;cursor:pointer}.option input{width:19px;height:19px;vertical-align:middle;margin-right:8px}
 .field{margin:12px 0}.field label{display:block;font-weight:bold;margin-bottom:5px}.field input,.field textarea{width:100%;padding:10px;border:1px solid #bbb;border-radius:7px;font-size:16px}
@@ -55,12 +54,29 @@ footer{background:#063b22;color:#fff;text-align:center;padding:28px}
 </div></section>
 <footer><h3 id="footer"></h3><p>आपकी सेवा, हमारा संकल्प</p></footer>
 
+<button class="editBtn" onclick="openEditor()">⚙️ Edit Website</button>
+
 <div id="modal"><div class="box">
 <button class="close" onclick="closeModal()">×</button>
 <div id="modalIcon" class="icon"></div><h2 id="modalTitle"></h2><p id="modalDesc"></p>
 <div id="options"></div>
 <button class="btn orange" onclick="sendSelected()">💬 चुनी हुई Service WhatsApp करें</button>
 </div></div>
+
+<div id="editor"><div class="box">
+<button class="close" onclick="closeEditor()">×</button><h2>⚙️ Website Edit</h2>
+<div class="field"><label>दुकान का नाम</label><input id="eName"></div>
+<div class="field"><label>Tagline</label><input id="eTag"></div>
+<div class="field"><label>मोबाइल</label><input id="ePhone"></div>
+<div class="field"><label>पता</label><textarea id="eAddress" rows="3"></textarea></div>
+<div class="field"><label>समय</label><input id="eHours"></div>
+<div class="field"><label>Intro</label><textarea id="eIntro" rows="3"></textarea></div>
+<div class="field"><label>About</label><textarea id="eAbout" rows="3"></textarea></div>
+<p><b>Services:</b> नीचे format में हर line एक service रखें: Emoji | नाम | विवरण</p>
+<div class="field"><textarea id="eServices" rows="10"></textarea></div>
+<button class="btn green" onclick="save()">💾 Save</button>
+</div></div>
+
 <script>
 const defaults={
 name:"Gramin Digital Jan Seva Kendra",
@@ -110,8 +126,22 @@ selectedService=data.services[i][1];
 document.getElementById("modalIcon").textContent=data.services[i][0];
 document.getElementById("modalTitle").textContent=selectedService;
 document.getElementById("modalDesc").textContent="ग्राहक अपनी जरूरत वाली service पर tick करें:";
-let list=choices[selectedService]||[data.services[i][2]];
-document.getElementById("options").innerHTML=list.map((x,n)=>`<label class="option"><input type="checkbox" class="serviceCheck" value="${x.replace(/"/g,"&quot;")}"> ${x}</label>`).join("");
+
+const optionSets=[
+["आधार में नाम सुधार","आधार में मोबाइल नंबर अपडेट","आधार में पता सुधार","आधार में जन्मतिथि सुधार","आधार डाउनलोड / प्रिंट"],
+["नया PAN Card आवेदन","PAN Card में सुधार","PAN डाउनलोड / प्रिंट"],
+["सरकारी फॉर्म भरना","ऑनलाइन रजिस्ट्रेशन","दस्तावेज़ अपलोड","फॉर्म प्रिंट"],
+["बिजली बिल भुगतान","मोबाइल रिचार्ज","पानी का बिल","अन्य बिल भुगतान"],
+["पैसे भेजना","लेन-देन सहायता","रसीद / ट्रांजैक्शन सहायता"],
+["Black & White Print","Color Print","दस्तावेज़ Scan","PDF बनाना"],
+["पासपोर्ट साइज फोटो","फोटो प्रिंट","डिजिटल फोटो"],
+["ऑनलाइन आवेदन","दस्तावेज़ संबंधी कार्य","डिजिटल कॉपी","अन्य डिजिटल सेवा"]
+];
+
+const list=optionSets[i] || [data.services[i][2]];
+document.getElementById("options").innerHTML=list.map(x=>
+`<label class="option"><input type="checkbox" class="serviceCheck" value="${x.replace(/"/g,"&quot;")}"> ${x}</label>`
+).join("");
 document.getElementById("modal").style.display="block";
 }
 function sendSelected(){
@@ -121,8 +151,14 @@ let msg="नमस्ते, मुझे Gramin Digital Jan Seva Kendra से 
 window.open(wa()+"?text="+encodeURIComponent(msg),"_blank");
 }
 function closeModal(){document.getElementById("modal").style.display="none"}
-
-
+function openEditor(){
+eName.value=data.name;eTag.value=data.tag;ePhone.value=data.phone;eAddress.value=data.address;eHours.value=data.hours;eIntro.value=data.intro;eAbout.value=data.about;
+eServices.value=data.services.map(s=>s.join(" | ")).join("\n");editor.style.display="block";
+}
+function save(){
+data={name:eName.value||defaults.name,tag:eTag.value||defaults.tag,phone:ePhone.value||defaults.phone,address:eAddress.value||defaults.address,hours:eHours.value||defaults.hours,intro:eIntro.value||defaults.intro,about:eAbout.value||defaults.about,services:eServices.value.split("\n").filter(x=>x.trim()).map(x=>{let p=x.split("|").map(y=>y.trim());return[p[0]||"📌",p[1]||"Service",p.slice(2).join(" | ")||"सेवा"]})};
+localStorage.setItem("gdjskData",JSON.stringify(data));render();closeEditor();alert("जानकारी Save हो गई!");
+}
 function closeEditor(){editor.style.display="none"}
 render();
 </script>
